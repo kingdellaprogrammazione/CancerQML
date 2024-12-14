@@ -139,27 +139,6 @@ class VQC(nn.Module):
     def save_model(self, filepath):
         torch.save(self.state_dict(), filepath)
     
-    def draw(self, inputs=None, weights=None, style='black_white'):
-        """
-        Draw the quantum circuit defined in the VQC class.
-
-        @inputs: Tensor of inputs to be encoded in the circuit.
-        @weights: Tensor of weights for the Ansatz layers.
-        @style: Style for the circuit drawing ('black_white', 'default', etc.).
-        """
-        # Use default inputs and weights if not provided
-        if inputs is None:
-            inputs = torch.zeros(self.num_wires, dtype=torch.float32)  # Default inputs
-        if weights is None:
-            weights = torch.zeros(self.weight_shapes['weights'], dtype=torch.float32)  # Default weights
-
-        # Set the desired style
-        qml.drawer.use_style(style)
-
-        # Draw the circuit using qml.draw_mpl
-        fig, ax = qml.draw_mpl(self.qnode)(inputs, weights)
-        return fig, ax
-    
 def evaluation(
     model: nn.Module,
     x: torch.Tensor,

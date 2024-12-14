@@ -1,130 +1,165 @@
 import pandas as pd
 import numpy as np
-from xgboost import XGBClassifier
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 from sklearn.impute import KNNImputer
+from sklearn.preprocessing import OneHotEncoder, LabelEncoder
+from sklearn.model_selection import train_test_split
+from xgboost import XGBClassifier
+import tensorflow as tf
+from tensorflow import keras
+from sklearn.metrics import accuracy_score
 import matplotlib.pyplot as plt
+import seaborn as sns
 
-#=====================================================
-# Step 0: Load the dataset
-#=====================================================
-df = pd.read_csv("ex.csv")
+# ---------------------------
+# Load and initial preprocess
+# ---------------------------
+df = pd.read_csv('Breast_cancer.csv', sep=',')  # Adjust file name/path as needed
+df.columns = df.columns.str.strip()  # Remove any trailing spaces
 
-X = df.drop('Outcome', axis=1)
-y = df['Outcome']
+print("Columns:", df.columns.tolist())  # Check column names
 
-#=====================================================
-# Step 1: Detect the importance of factors
-#=====================================================
-X_train_init, X_test_init, y_train_init, y_test_init = train_test_split(X, y, test_size=0.2, random_state=42)
-model_init = XGBClassifier(use_label_encoder=False, eval_metric='logloss', random_state=42)
-model_init.fit(X_train_init, y_train_init)
+# Identify the label column
+label_col = 'Status'
 
-importances = model_init.feature_importances_
-feature_importances = pd.Series(importances, index=X.columns).sort_values(ascending=False)
-print("Initial Feature Importances:")
-print(feature_importances)
+# Separate features and target
+X = df.drop(columns=[label_col])
+y = df[label_col]
 
-# Plot initial feature importances
-plt.figure(figsize=(8,6))
-feature_importances.plot(kind='bar', title='Initial Feature Importances')
-plt.ylabel('Importance Score')
+# Map target values from strings to numeric
+y = y.map({'Dead': 0, 'Alive': 1})
+
+# According to the dataset snippet you provided, the columns are:
+# Age, Race, Marital St., T Stage, N Stage, 6th Stage, differenti,
+# Grade, A Stage, Tumor Siz, Estrogen S, Progester, Regional N, Reginol N, Survival M, Status
+#
+# We'll treat the following as categorical (textual):
+cat_cols = ['Race', 'Marital Status', 'T Stage', 'N Stage', '6th Stage',
+            'differentiate', 'A Stage', 'Estrogen Status', 'Progesterone Status',]
+num_cols = ['Age', 'Grade', 'Tumor Size', 'Regional Node Examined', 'Reginol Node Positive', 'Survival Months']
+
+# Ensure numeric columns are indeed numeric
+for nc in num_cols:
+    df[nc] = pd.to_numeric(df[nc], errors='coerce')
+
+X_cat = X[cat_cols].astype(str)
+X_num = X[num_cols]
+
+# One-hot encode categorical features
+encoder = OneHotEncoder(handle_unknown='ignore', sparse_output=False)
+X_cat_encoded = encoder.fit_transform(X_cat)
+cat_feature_names = encoder.get_feature_names_out(cat_cols)
+
+X_encoded = pd.DataFrame(
+    np.hstack([X_num.values, X_cat_encoded]),
+    columns=num_cols + list(cat_feature_names)
+)
+
+# Force all columns in X_encoded to numeric, just in case
+X_encoded = X_encoded.apply(pd.to_numeric, errors='coerce')
+
+# ---------------------------
+# Identify Feature Importances using XGBoost
+# ---------------------------
+X_train_fi, X_test_fi, y_train_fi, y_test_fi = train_test_split(X_encoded, y, test_size=0.2, random_state=42)
+
+xgb = XGBClassifier(use_label_encoder=False, eval_metric='logloss', random_state=42)
+xgb.fit(X_train_fi, y_train_fi)
+
+# Get feature importance
+importances = xgb.feature_importances_
+feature_importance_df = pd.DataFrame({
+    'feature': X_encoded.columns,
+    'importance': importances
+}).sort_values('importance', ascending=False)
+
+# ---------------------------
+# Plot Feature Importances Before Elimination
+# ---------------------------
+top_n_before = 20 if len(feature_importance_df) > 20 else len(feature_importance_df)
+plt.figure(figsize=(10, 6))
+sns.barplot(x="importance", y="feature", data=feature_importance_df.head(top_n_before), color="skyblue")
+plt.title("Top 20 Feature Importances (Before Elimination)")
+plt.xlabel("Importance Score")
+plt.ylabel("Feature")
 plt.tight_layout()
 plt.show()
 
-#=====================================================
-# Step 2: Show the amount of zeros
-#=====================================================
-zero_counts = (X == 0).sum()
-zero_percentage = (X == 0).mean() * 100
-print("\nCount of Zeros in Each Feature:")
-print(zero_counts)
-print("\nPercentage of Zeros in Each Feature:")
-print(zero_percentage)
+# ---------------------------
+# Select top N features and eliminate the rest
+# ---------------------------
+top_n = 10
+top_features = feature_importance_df.head(top_n)['feature'].tolist()
 
-#=====================================================
-# Step 3: Sanitize the dataset
-# Remove at least 3 features that are both low in importance and have lots of zeros.
-# We'll remove:
-# - The bottom 30% of features by importance.
-# - Among them, pick those that have more than 40% zeros.
-# - Ensure at least 3 features are removed.
+# Determine which features were eliminated
+all_features_set = set(feature_importance_df['feature'])
+top_features_set = set(top_features)
+eliminated_features = all_features_set - top_features_set
 
-# Define thresholds
-importance_cutoff = int(len(feature_importances) * 0.7)  # top 70% are kept
-zero_threshold = 40.0
+print(f"\nRetained top {top_n} features:")
+print(top_features)
+print("\nEliminated features:")
+print(list(eliminated_features))
 
-least_important_features = feature_importances.index[importance_cutoff:]  # bottom 30%
-candidates_to_remove = zero_percentage[zero_percentage > zero_threshold].index
-features_to_remove = list(set(least_important_features) & set(candidates_to_remove))
+# ---------------------------
+# Plot the top N features after elimination
+# ---------------------------
+plt.figure(figsize=(10, 6))
+sns.barplot(x="importance", y="feature", data=feature_importance_df.head(top_n), color="skyblue")
+plt.title("Top 10 Feature Importances (After Elimination)")
+plt.xlabel("Importance Score")
+plt.ylabel("Feature")
+plt.tight_layout()
+plt.show()
 
-# If fewer than 3 features match this criterion, remove additional bottom features to ensure at least 3 are removed
-if len(features_to_remove) < 3:
-    bottom_features = list(feature_importances.index[-3:])  # last 3 most unimportant features
-    for f in bottom_features:
-        if f not in features_to_remove:
-            features_to_remove.append(f)
-features_to_remove = features_to_remove[:3]
+# ---------------------------
+# Prepare for Sanitization
+# ---------------------------
+X_reduced = X_encoded[top_features]
 
-print("\nFeatures Removed Due to Low Importance and Many Zeros:")
-print(features_to_remove)
+# Replace zeros with NaN in numeric top features
+numeric_top_features = [f for f in top_features if f in num_cols]
+X_reduced_sanitized = X_reduced.copy()
+for col in numeric_top_features:
+    X_reduced_sanitized[col] = X_reduced_sanitized[col].replace(0, np.nan)
 
-X_sanitized = X.drop(columns=features_to_remove)
-
-#=====================================================
-# Step 4: For the rest of zeros, use KNN to fill those in
-# Identify columns typically imputed (no zero values expected)
-columns_to_impute = [col for col in X_sanitized.columns if col in ["Glucose","BloodPressure","SkinThickness","Insulin","BMI"]]
-
-X_imputed = X_sanitized.copy()
-X_imputed[columns_to_impute] = X_imputed[columns_to_impute].replace(0, np.nan)
-
+# Apply KNN Imputer
 imputer = KNNImputer(n_neighbors=5)
-X_imputed[columns_to_impute] = imputer.fit_transform(X_imputed[columns_to_impute])
+X_imputed = imputer.fit_transform(X_reduced_sanitized)
+X_imputed = pd.DataFrame(X_imputed, columns=top_features)
 
-#=====================================================
-# Step 5: Before-After Comparison
-#=====================================================
-def train_and_evaluate(X_data, y_data, desc):
-    X_train, X_test, y_train, y_test = train_test_split(X_data, y_data, test_size=0.2, random_state=42)
-    model = XGBClassifier(use_label_encoder=False, eval_metric='logloss', random_state=42)
-    model.fit(X_train, y_train)
-    y_pred = model.predict(X_test)
-    print(f"\n{desc} - Classification Report:")
-    print(classification_report(y_test, y_pred))
-    print(f"{desc} - Confusion Matrix:")
-    print(confusion_matrix(y_test, y_pred))
-    acc = accuracy_score(y_test, y_pred)
-    return model, acc
+# ---------------------------
+# Train NN on unsanitized vs sanitized
+# ---------------------------
+X_train_u, X_test_u, y_train_u, y_test_u = train_test_split(X_reduced, y, test_size=0.2, random_state=42)
+X_train_s, X_test_s, y_train_s, y_test_s = train_test_split(X_imputed, y, test_size=0.2, random_state=42)
 
-print("\nPerformance BEFORE sanitation:")
-model_before, acc_before = train_and_evaluate(X, y, "Before Sanitation")
+def build_nn_model(input_dim):
+    model = keras.Sequential([
+        keras.layers.Dense(64, activation='relu', input_shape=(input_dim,)),
+        keras.layers.Dense(32, activation='relu'),
+        keras.layers.Dense(1, activation='sigmoid')
+    ])
+    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+    return model
 
-print("\nPerformance AFTER sanitation:")
-model_after, acc_after = train_and_evaluate(X_imputed, y, "After Sanitation")
+# Train NN on unsanitized data
+model_u = build_nn_model(X_train_u.shape[1])
+model_u.fit(X_train_u, y_train_u, epochs=10, batch_size=16, verbose=0)
+y_pred_u = (model_u.predict(X_test_u) > 0.5).astype(int)
+acc_u = accuracy_score(y_test_u, y_pred_u)
 
-#=====================================================
-# Plot the difference in accuracy
-#=====================================================
-plt.figure(figsize=(6,4))
-plt.bar(["Before", "After"], [acc_before, acc_after], color=["red","green"])
-plt.title("Accuracy Before vs After Sanitation")
-plt.ylabel("Accuracy")
-plt.tight_layout()
-plt.show()
+# Train NN on sanitized data
+model_s = build_nn_model(X_train_s.shape[1])
+model_s.fit(X_train_s, y_train_s, epochs=10, batch_size=16, verbose=0)
+y_pred_s = (model_s.predict(X_test_s) > 0.5).astype(int)
+acc_s = accuracy_score(y_test_s, y_pred_s)
 
-# Optional: Show which features remain after sanitation
-print("\nFeatures after sanitation:")
-print(X_imputed.columns)
+print("\nAccuracy on unsanitized data:", acc_u)
+print("Accuracy on sanitized data:", acc_s)
 
-#=====================================================
-# Step 6: Export the sanitized and imputed dataset
-#=====================================================
-# Add back the Outcome column
-final_df = X_imputed.copy()
-final_df['Outcome'] = y
-
-# Export to a new CSV file
-final_df.to_csv("sanitized_data.csv", index=False)
-print("\nSanitized dataset exported to 'sanitized_data.csv'")
+# ---------------------------
+# Export the sanitized CSV
+# ---------------------------
+df_sanitized = pd.DataFrame(X_imputed, columns=top_features)
+df_sanitized[label_col] = y.values
+df_sanitized.to_csv('data_sanitized.csv', index=False)

@@ -20,6 +20,8 @@ import torch
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 
+from pathlib import *
+
 def prepare_angle_data(file_name):
     df = pd.read_csv('data/diabetesrenewed.csv')
 
@@ -128,14 +130,35 @@ class VQC(nn.Module):
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
         """Forward pass through the hybrid model."""
         return self.qlayer(inputs)
-    
-    def save_model(self, filepath):
-        state = {'model_state_dict': self.state_dict()}
-        torch.save(state, filepath, _use_new_zipfile_serialization=False)
-        #torch.save(self.state_dict(), filepath)
-    def restore_model(self, filepath):
+            
+    def load_model(self, filepath: str):
+        # Recreate the model with the same architecture
         self.load_state_dict(torch.load(filepath))
+        self.eval()
 
+    def save_model(self, filepath):
+        torch.save(self.state_dict(), filepath)
+    
+    def draw(self, inputs=None, weights=None, style='black_white'):
+        """
+        Draw the quantum circuit defined in the VQC class.
+
+        @inputs: Tensor of inputs to be encoded in the circuit.
+        @weights: Tensor of weights for the Ansatz layers.
+        @style: Style for the circuit drawing ('black_white', 'default', etc.).
+        """
+        # Use default inputs and weights if not provided
+        if inputs is None:
+            inputs = torch.zeros(self.num_wires, dtype=torch.float32)  # Default inputs
+        if weights is None:
+            weights = torch.zeros(self.weight_shapes['weights'], dtype=torch.float32)  # Default weights
+
+        # Set the desired style
+        qml.drawer.use_style(style)
+
+        # Draw the circuit using qml.draw_mpl
+        fig, ax = qml.draw_mpl(self.qnode)(inputs, weights)
+        return fig, ax
     
 def evaluation(
     model: nn.Module,
@@ -287,3 +310,7 @@ def train(
     return model
 
 
+def name_parser(file_path):
+    file_name = file_path.name
+    pieces = file_name.split('-')
+    return pieces

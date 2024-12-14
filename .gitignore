@@ -163,3 +163,61 @@ cython_debug/
 ClassicML/Breast_Cancer.csv
 ClassicML/data_sanitized.csv
 ClassicML/Breast_Cancer.csv
+
+
+
+
+
+
+
+
+# LaTeX build files
+*.aux
+*.bbl
+*.blg
+*.brf
+*.idx
+*.ilg
+*.ind
+*.lof
+*.log
+*.lot
+*.out
+*.toc
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.run.xml
+
+# Temporary files
+*.tmp
+*.bak
+*.sav
+*.dvi
+
+# PDF and PostScript files (optional, if generated files shouldn't be tracked)
+*.pdf
+*.ps
+*.eps
+
+# Editor-specific files
+# VSCode
+.vscode/
+# Emacs
+*~
+\#*\#
+.#*
+# macOS Finder
+.DS_Store
+# LaTeX editors
+*.swp
+*.swo
+
+# Other temporary files
+*.gz
+*.pyg
+*.snm
+*.nav
+*.vrb
+*.xdy
+*.listing

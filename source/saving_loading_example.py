@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import joblib
 from itertools import product
 from sklearn.metrics import classification_report
 import numpy as np
@@ -20,7 +19,7 @@ model = VQC(num_wires=8, num_outputs=1, num_layers=10, encoding='angle', reuploa
 model.train_model(data, epochs=1, lr=0.0001, verbose = False)
 model.evaluate_model(data)
 
-model_path_dict = current_file.parent / 'prova'
+model_path_dict = current_file.parent / 'prova.test'
 
 #torch.save(model, model_path_dict)
 model.save_model(model_path_dict)

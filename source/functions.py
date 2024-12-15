@@ -62,9 +62,3 @@ def angle_encode(data):
         'y_valid': y_valid
     }
 
-
-
-def name_parser(file_path):
-    file_name = file_path.name
-    pieces = file_name.split('-')
-    return pieces

@@ -9,9 +9,7 @@ from VQC import VQC
 from functions import *
 
 current_file = Path(__file__)
-print(current_file) 
 input = current_file.parent.parent / 'data' / 'diabete' / 'diabetes_cleaned.csv'
-print(input)
 
 data = data_split(input)  
 

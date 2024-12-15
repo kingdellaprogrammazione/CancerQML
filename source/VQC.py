@@ -92,7 +92,7 @@ class VQC(nn.Module):
             
     def load_model(self, filepath: str):
         # Recreate the model with the same architecture
-        self.load_state_dict(torch.load(filepath))
+        self.load_state_dict(torch.load(filepath, weights_only=True))
         self.eval()
 
     def save_model(self, filepath):
@@ -208,7 +208,6 @@ class VQC(nn.Module):
         with torch.no_grad():
             # function needed for VQC
             y_pred = (1 - self(x)) / 2
-            print(y_pred)
         print(classification_report(y, y_pred > threshold_classification))
         print(confusion_matrix(y, y_pred > threshold_classification))    
     

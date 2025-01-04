@@ -6,13 +6,13 @@ import torch
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 
-def data_split(file_name):
+def data_split(file_name, outcome_label):
 
     df = pd.read_csv(file_name)
 
     # Split data into features (X) and target (y)
-    X = df.drop('Outcome', axis=1)
-    y = df['Outcome']
+    X = df.drop(outcome_label, axis=1)
+    y = df[outcome_label]
 
     # Split data into training and testing sets
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=42)

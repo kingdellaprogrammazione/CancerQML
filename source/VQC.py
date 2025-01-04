@@ -6,10 +6,12 @@ from typing import Any, Dict
 
 # Third-Party Library Imports
 import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
 import pennylane as qml
 import torch
 from torch import nn, load, save
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import classification_report, confusion_matrix, roc_curve, auc
 from sklearn.preprocessing import MinMaxScaler
 
 
@@ -189,7 +191,8 @@ class VQC(nn.Module):
         data: Dict[str, torch.Tensor],
         str_x_eval = 'X_test',
         str_y_eval = 'y_test',
-        threshold_classification: float = 0.5
+        threshold_classification: float = 0.5,
+        draw_roc = 'False'
     ):
         """
         Evaluate the model
@@ -209,7 +212,22 @@ class VQC(nn.Module):
             # function needed for VQC
             y_pred = (1 - self(x)) / 2
         print(classification_report(y, y_pred > threshold_classification))
-        print(confusion_matrix(y, y_pred > threshold_classification))    
+        print(confusion_matrix(y, y_pred > threshold_classification))   
+
+        if (draw_roc == 'True'):
+            fpr, tpr, thresholds = roc_curve(y, y_pred)
+            roc_auc = auc(fpr, tpr)  # Compute Area Under the Curve (AUC)
+            plt.figure(figsize=(8, 6))
+            plt.plot(fpr, tpr, color='darkorange', lw=2, label=f"ROC curve (AUC = {roc_auc:.2f})")
+            plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--', label="Random guess")
+            plt.xlabel("False Positive Rate")
+            plt.ylabel("True Positive Rate")
+            plt.title("Receiver Operating Characteristic (ROC) Curve")
+            plt.legend(loc="lower right")
+            plt.grid()
+            plt.show()
+        
+
     
 def angle_encode_data(data: Dict[str, torch.Tensor]) -> Dict[str, torch.Tensor]:
     X_train = data['X_train']

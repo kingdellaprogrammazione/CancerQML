@@ -8,7 +8,7 @@ current_file = Path(__file__)
 # modify here to select the correct training data
 
 input_path = current_file.parent.parent / 'data' / 'cancer' 
-input_file = input_path / 'breast_cancer_12features.csv'
+input_file = input_path / 'PCA_breast_cancer_dead_12_features.csv'
 
 print('I am using the data file at the path:' + str(input_file))
 
@@ -32,8 +32,13 @@ downsampled_df = pd.concat([class_0_downsampled, class_1_downsampled])
 downsampled_df = downsampled_df.sample(frac=1, random_state=42).reset_index(drop=True)
 
 # Save the downsampled dataset
-output_file = input_path / 'downsampled_breast_cancer_12features.csv'
-downsampled_df.to_csv(output_file, index=False)
+# Check if the file exists
+
+output_file = input_path / 'downsampled_PCA_breast_cancer_dead_12_features.csv'
+if output_file.exists() and output_file.is_file():
+    print("The file exists. Exiting")
+else:
+    downsampled_df.to_csv(output_file, index=False)
 
 print("Original dataset size:", len(df))
 print("Downsampled dataset size:", len(downsampled_df))

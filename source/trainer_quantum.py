@@ -7,12 +7,28 @@ import numpy as np
 from tqdm import tqdm
 
 from VQC import VQC
+import tkinter as tk
+from tkinter import filedialog
 
-current_file = Path(__file__)
+GUI = True
 
-# modify here to select the correct training data
-input_file = current_file.parent.parent / 'data' / 'cancer' / 'downsampled_breast_cancer_12features.csv'
-print('I am using the data file at the path:' + str(input_file))
+if GUI == True:
+    # Create a root window
+    root = tk.Tk()
+    root.withdraw()  # Hide the root window
+
+    # Open the file dialog to select a file
+    input_path = filedialog.askopenfilename(title="Select a File", filetypes=(("CSV Files", "*.csv"), ("All Files", "*.*")))
+    input_file = Path(input_path)
+
+    # Print the selected file path
+    print('I am using the data file at the path:' + str(input_file))
+else:
+    current_file = Path(__file__)
+
+    # modify here to select the correct training data
+    input_file = current_file.parent.parent / 'data' / 'cancer' / 'downsampled_PCA_breast_cancer_dead_8_features.csv'
+    print('I am using the data file at the path:' + str(input_file))
 
 data = data_split(input_file, 'Status_Dead')  
 column_names = list(data['X_train'].columns)
@@ -32,7 +48,15 @@ dict_combinations = [dict(zip(dict_keys, tpl)) for tpl in combinations]
 
 for i in dict_combinations:
 
-    downsample = True
+    downsample = False
+    pca = False
+
+    # Check if 'downsample' and 'pca' are in the file name
+    if "downsample" in input_file.name.lower():  # Case-insensitive check
+        downsample = True
+
+    if "pca" in input_file.name.lower():  # Case-insensitive check
+        pca = True
 
     model = VQC(num_wires=num_features, num_outputs=1, num_layers=i['layers'], encoding=i['encoding'], reuploading=False) 
     model.train_model(data, epochs=i['epochs'], lr=i['learning_rate'], verbose = True)
@@ -42,13 +66,16 @@ for i in dict_combinations:
     filename = f"quantum_weights-enc:{i['encoding']}-ans:{i['ansatz']}-lay:{i['layers']}-lr:{i['learning_rate']}-ep:{i['epochs']}.pth"
     subfolder_name_feature = 'best_' + str(num_features) + '_features'
 
+    prefix_path_dir = current_file.parent.parent / 'data' / 'weights' / 'quantum'/ 'cancer' 
+
     #create directory
+    if pca == True:
+        model_path_dir = model_path_dir / 'PCA' 
     if downsample == True:
-        model_path_dir = current_file.parent.parent / 'data' / 'weights' / 'quantum'/ 'cancer'  / subfolder_name_feature / 'downsampled'
-        model_path_dir.mkdir(parents=True, exist_ok=True)  # `parents=True` creates intermediate directories
-    else:
-        model_path_dir = current_file.parent.parent / 'data' / 'weights' / 'quantum'/ 'cancer'  / subfolder_name_feature
-        model_path_dir.mkdir(parents=True, exist_ok=True)  # `parents=True` creates intermediate directories
+        model_path_dir = prefix_path_dir / 'downsampled'
+
+    model_path_dir = model_path_dir / subfolder_name_feature
+    model_path_dir.mkdir(parents=True, exist_ok=True)  # `parents=True` creates intermediate directories
 
     weights_complete_path = model_path_dir / filename
     if weights_complete_path.exists():

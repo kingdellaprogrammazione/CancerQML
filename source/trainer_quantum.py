@@ -63,7 +63,7 @@ for i in dict_combinations:
     model.evaluate_model(data)
 
 
-    filename = f"quantum_weights-enc:{i['encoding']}-ans:{i['ansatz']}-lay:{i['layers']}-lr:{i['learning_rate']}-ep:{i['epochs']}.pth"
+    filename = f"quantum_weights-enc_{i['encoding']}-ans_{i['ansatz']}-lay_{i['layers']}-lr_{i['learning_rate']}-ep_{i['epochs']}.pth"
     subfolder_name_feature = 'best_' + str(num_features) + '_features'
 
     prefix_path_dir = current_file.parent.parent / 'data' / 'weights' / 'quantum'/ 'cancer' 

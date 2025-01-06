@@ -52,7 +52,7 @@ else:
 
     complete_path = model_path_dir / file_to_load
 
-pattern = r"quantum_weights-enc:(\w+)-ans:(\w+)-lay:(\d+)-lr:(\d+\.\d+)-ep:(\d+)\.pth"
+pattern = r"quantum_weights-enc_(\w+)-ans_(\w+)-lay_(\d+)-lr_(\d+\.\d+)-ep_(\d+)\.pth"
 match = re.match(pattern, file_to_load)
 
 if match:

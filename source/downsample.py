@@ -9,7 +9,7 @@ current_file = Path(__file__)
 
 input_path = current_file.parent.parent / 'data' / 'cancer' 
 num_features = 9
-input_file = input_path / f'PCA_breast_cancer_dead_{num_features}_features.csv'
+input_file = input_path / f'PCA_breast_cancer_dead_{num_features}features.csv'
 
 print('I am using the data file at the path:' + str(input_file))
 
@@ -34,7 +34,7 @@ downsampled_df = downsampled_df.sample(frac=1, random_state=42).reset_index(drop
 # Save the downsampled dataset
 # Check if the file exists
 
-output_file = input_path / f'downsampled_PCA_breast_cancer_dead_{num_features}_features.csv'
+output_file = input_path / f'downsampled_PCA_breast_cancer_dead_{num_features}features.csv'
 if output_file.exists() and output_file.is_file():
     print("The file exists. Exiting")
 else:

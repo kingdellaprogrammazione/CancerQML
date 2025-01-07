@@ -30,7 +30,7 @@ if GUI == True:
 
 else:
     # modify here to select the correct training data
-    input_file = current_file.parent.parent / 'data' / 'cancer' / 'downsampled_PCA_breast_cancer_dead_8_features.csv'
+    input_file = current_file.parent.parent / 'data' / 'cancer' / 'downsampled_PCA_breast_cancer_dead_8features.csv'
     print('I am using the data file at the path:' + str(input_file))
 
 
@@ -49,7 +49,7 @@ if GUI == True:
     # weights_files = [file for file in directory_path.glob("*.pth")]
 
 else:
-    model_path_dir = current_file.parent.parent / 'data' / 'weights' / 'quantum'/ 'cancer'  / 'best_8_features' / 'downsampled' / 'PCA'  
+    model_path_dir = current_file.parent.parent / 'data' / 'weights' / 'quantum'/ 'cancer'  / '8features' / 'downsampled' / 'PCA'  
     print("I am looking inside the dir:" + str(model_path_dir))
 
     # match values
@@ -103,8 +103,8 @@ for file in directory_path.glob("*.pth"):
 # If you want to further process the extracted info:
 # For example, accessing the first file's info:
 for i in extracted_info:
-    if i["learning_rate"] == 0.001:
-        model = VQC(num_wires=8, num_outputs=1, num_layers=i["layers"], encoding=i["encoding"], reuploading=False) 
+    if i["learning_rate"] == 0.001 or i["learning_rate"] == 0.01:
+        model = VQC(num_wires=10, num_outputs=1, num_layers=i["layers"], encoding=i["encoding"], reuploading=False) 
         model.load_model(i["file_name"])  # Load model weights
         roc_data = model.evaluate_model(data)
 
@@ -114,7 +114,7 @@ for i in extracted_info:
         auc_value = roc_data['auc']
 
         # Plot the ROC curve for this model
-        plt.plot(fpr, tpr, lw=2, label=f'ROC curve for {i["layers"]}, 0.001 (AUC = {auc_value:.2f})')
+        plt.plot(fpr, tpr, lw=1, label=f'ROC curve for {i["layers"]}, {i["learning_rate"]} (AUC = {auc_value:.2f})')
 
 else:
     print("Invalid file name format.")

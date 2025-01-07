@@ -29,7 +29,7 @@ else:
     current_file = Path(__file__)
 
     # modify here to select the correct training data
-    input_file = current_file.parent.parent / 'data' / 'cancer' / 'downsampled_PCA_breast_cancer_dead_8_features.csv'
+    input_file = current_file.parent.parent / 'data' / 'cancer' / 'downsampled_PCA_breast_cancer_dead_8features.csv'
     print('I am using the data file at the path:' + str(input_file))
 
 
@@ -44,7 +44,7 @@ if GUI == True:
     file_to_load = file_path.name
 
 else:
-    model_path_dir = current_file.parent.parent / 'data' / 'weights' / 'quantum'/ 'cancer'  / 'best_8_features' / 'downsampled' / 'PCA'  
+    model_path_dir = current_file.parent.parent / 'data' / 'weights' / 'quantum'/ 'cancer'  / '8features' / 'downsampled' / 'PCA'  
     print("I am looking inside the dir:" + str(model_path_dir))
 
     # match values

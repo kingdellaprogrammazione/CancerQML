@@ -52,7 +52,7 @@ final_data = pd.DataFrame(data_pca, columns=[f'PC{i+1}' for i in range(desired_c
 final_data['Status_Dead'] = target.reset_index(drop=True)
 
 # Save the final DataFrame
-output_file = current_file.parent.parent / 'data' / 'cancer' / f'PCA_breast_cancer_dead_{desired_components}_features.csv'
+output_file = current_file.parent.parent / 'data' / 'cancer' / f'PCA_breast_cancer_dead_{desired_components}features.csv'
 
 # Check if the file already exists
 if output_file.exists():

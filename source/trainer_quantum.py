@@ -28,11 +28,11 @@ if GUI == True:
 else:
 
     # modify here to select the correct training data
-    input_file = current_file.parent.parent / 'data' / 'cancer' / 'downsampled_PCA_breast_cancer_dead_8_features.csv'
+    input_file = current_file.parent.parent / 'data' / 'cancer' / 'downsampled_PCA_breast_cancer_dead_8features.csv'
     print('I am using the data file at the path:' + str(input_file))
 
 #capture feature number
-match = re.search(r'(\d+)_features', str(input_file))
+match = re.search(r'(\d+)features', str(input_file))
 
 if match:
     # Extract the matched number
@@ -75,7 +75,7 @@ for i in dict_combinations:
 
 
     filename = f"quantum_weights-enc_{i['encoding']}-ans_{i['ansatz']}-lay_{i['layers']}-lr_{i['learning_rate']}-ep_{i['epochs']}.pth"
-    subfolder_name_feature = 'best_' + str(num_features) + '_features'
+    subfolder_name_feature = str(num_features) + 'features'
 
     model_path_dir = current_file.parent.parent / 'data' / 'weights' / 'quantum'/ 'cancer' 
 

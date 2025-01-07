@@ -5,12 +5,14 @@ from functions import *
 from itertools import product
 import numpy as np
 from tqdm import tqdm
+import re
 
 from VQC import VQC
 import tkinter as tk
 from tkinter import filedialog
 
 GUI = True
+current_file = Path(__file__)
 
 if GUI == True:
     # Create a root window
@@ -24,21 +26,30 @@ if GUI == True:
     # Print the selected file path
     print('I am using the data file at the path:' + str(input_file))
 else:
-    current_file = Path(__file__)
 
     # modify here to select the correct training data
     input_file = current_file.parent.parent / 'data' / 'cancer' / 'downsampled_PCA_breast_cancer_dead_8_features.csv'
     print('I am using the data file at the path:' + str(input_file))
 
+#capture feature number
+match = re.search(r'(\d+)_features', str(input_file))
+
+if match:
+    # Extract the matched number
+    num_features = int(match.group(1))
+else:
+    print("No match for feature number found.")
+    exit()
+
 data = data_split(input_file, 'Status_Dead')  
 column_names = list(data['X_train'].columns)
-num_features = data['X_train'].shape[1]
+# num_features = data['X_train'].shape[1]
 
 #here fill with the chosen hyperparameters
 encoding_options = ["angle"]
-layer_options = [10]
+layer_options = [10,15,20]
 ansatz_options= ["strong"]
-learning_rates_options = [1e-3]
+learning_rates_options = [1e-2,1e-3]
 epochs_options =[1000]
 
 dict_keys = ['encoding', 'layers', 'ansatz', 'learning_rate', 'epochs']
@@ -66,13 +77,13 @@ for i in dict_combinations:
     filename = f"quantum_weights-enc_{i['encoding']}-ans_{i['ansatz']}-lay_{i['layers']}-lr_{i['learning_rate']}-ep_{i['epochs']}.pth"
     subfolder_name_feature = 'best_' + str(num_features) + '_features'
 
-    prefix_path_dir = current_file.parent.parent / 'data' / 'weights' / 'quantum'/ 'cancer' 
+    model_path_dir = current_file.parent.parent / 'data' / 'weights' / 'quantum'/ 'cancer' 
 
     #create directory
     if pca == True:
         model_path_dir = model_path_dir / 'PCA' 
     if downsample == True:
-        model_path_dir = prefix_path_dir / 'downsampled'
+        model_path_dir = model_path_dir / 'downsampled'
 
     model_path_dir = model_path_dir / subfolder_name_feature
     model_path_dir.mkdir(parents=True, exist_ok=True)  # `parents=True` creates intermediate directories

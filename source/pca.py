@@ -20,7 +20,7 @@ data = pd.read_csv(input_file)
 target = data['Status_Dead']
 data = data.drop(columns=['Status_Dead'])
 
-# Step 6: Scale the data to range [0, 1] using MinMaxScaler
+# Step 6: Scale the data to range [-1, 1] using MinMaxScaler
 scaler = MinMaxScaler(feature_range=(-1, 1))
 data_scaled = scaler.fit_transform(data)
 
@@ -40,8 +40,8 @@ plt.show()
 # Step 9: Select the number of components (e.g., 95% variance threshold)
 
 variance_threshold = float(input("Enter the variance threshold (e.g., 0.95 for 95%): "))
-desired_components = np.argmax(np.cumsum(pca.explained_variance_ratio_) >= variance_threshold) + 1
-print(f"Number of components selected to retain 95% variance: {desired_components}")
+desired_components = np.argmax(np.cumsum(pca.explained_variance_ratio_) >= variance_threshold)
+print(f"Number of components selected to retain {variance_threshold} variance: {desired_components}")
 
 # Step 10: Transform the data using the selected number of components
 pca = PCA(n_components=desired_components)

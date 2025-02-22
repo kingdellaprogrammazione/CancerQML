@@ -7,9 +7,12 @@ current_file = Path(__file__)
 
 # modify here to select the correct training data
 
-input_path = current_file.parent.parent / 'data' / 'cancer' 
-num_features = 9
-input_file = input_path / f'PCA_breast_cancer_dead_{num_features}features.csv'
+input_path = current_file.parent.parent / 'data'  
+num_features = 0
+if num_features == 0:
+    input_file = input_path / 'onehot' / 'breast_cancer_tonumbers_dead.csv'
+else:
+    input_file = input_path / 'processed' / f'breast_cancer_dead_{num_features}f.csv'
 
 print('I am using the data file at the path:' + str(input_file))
 
@@ -34,7 +37,11 @@ downsampled_df = downsampled_df.sample(frac=1, random_state=42).reset_index(drop
 # Save the downsampled dataset
 # Check if the file exists
 
-output_file = input_path / f'downsampled_PCA_breast_cancer_dead_{num_features}features.csv'
+if num_features == 0:
+    output_file = input_path / 'processed' / 'downsampled' / f'downsampled_breast_cancer_dead.csv'
+else:
+    output_file = input_path / 'processed' / 'downsampled' / f'downsampled_breast_cancer_dead_{num_features}f.csv'
+
 if output_file.exists() and output_file.is_file():
     print("The file exists. Exiting")
 else:

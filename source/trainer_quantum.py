@@ -28,11 +28,11 @@ if GUI == True:
 else:
 
     # modify here to select the correct training data
-    input_file = current_file.parent.parent / 'data' / 'cancer' / 'downsampled_PCA_breast_cancer_dead_8features.csv'
+    input_file = current_file.parent.parent / 'data' / 'processed' / 'downsampled_pca' / 'downsampled_pca_breast_cancer_dead_8f.csv'
     print('I am using the data file at the path:' + str(input_file))
 
 #capture feature number
-match = re.search(r'(\d+)features', str(input_file))
+match = re.search(r'(\d+)f', str(input_file))
 
 if match:
     # Extract the matched number
@@ -47,9 +47,9 @@ column_names = list(data['X_train'].columns)
 
 #here fill with the chosen hyperparameters
 encoding_options = ["angle"]
-layer_options = [10,15,20]
+layer_options = [15,20]
 ansatz_options= ["strong"]
-learning_rates_options = [1e-2,1e-3]
+learning_rates_options = [1e-2]
 epochs_options =[1000]
 
 dict_keys = ['encoding', 'layers', 'ansatz', 'learning_rate', 'epochs']
@@ -64,31 +64,29 @@ for i in dict_combinations:
 
     # Check if 'downsample' and 'pca' are in the file name
     if "downsample" in input_file.name.lower():  # Case-insensitive check
-        downsample = True
+        downsample_string = 'downsampled-'
+    else:
+        downsample_string=''
 
     if "pca" in input_file.name.lower():  # Case-insensitive check
-        pca = True
+        pca_string = 'pca-'
+    else:
+        pca_string = 'pca-'
 
     model = VQC(num_wires=num_features, num_outputs=1, num_layers=i['layers'], encoding=i['encoding'], reuploading=False) 
     model.train_model(data, epochs=i['epochs'], lr=i['learning_rate'], verbose = True)
     model.evaluate_model(data)
 
 
-    filename = f"quantum_weights-enc_{i['encoding']}-ans_{i['ansatz']}-lay_{i['layers']}-lr_{i['learning_rate']}-ep_{i['epochs']}.pth"
-    subfolder_name_feature = str(num_features) + 'features'
+    first_piece = 'q_weights-enc_ang-ans_'
+    final_piece = f"ans_strong-lay_{i['layers']}-lr_{i['learning_rate']}-ep_{i['epochs']}-{i[num_features]}f.pth"
+    
+    complete_filename = first_piece + downsample_string + pca_string + final_piece
 
-    model_path_dir = current_file.parent.parent / 'data' / 'weights' / 'quantum'/ 'cancer' 
+    model_path_dir = current_file.parent.parent / 'weights' / 'quantum'/ 'angle' 
 
-    #create directory
-    if pca == True:
-        model_path_dir = model_path_dir / 'PCA' 
-    if downsample == True:
-        model_path_dir = model_path_dir / 'downsampled'
+    weights_complete_path = model_path_dir / complete_filename
 
-    model_path_dir = model_path_dir / subfolder_name_feature
-    model_path_dir.mkdir(parents=True, exist_ok=True)  # `parents=True` creates intermediate directories
-
-    weights_complete_path = model_path_dir / filename
     if weights_complete_path.exists():
         print(f"File '{weights_complete_path}' already exists. Skipping...")
     else:

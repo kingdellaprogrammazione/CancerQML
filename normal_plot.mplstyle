@@ -1,0 +1,35 @@
+figure.figsize: 16,12
+figure.facecolor: white
+figure.edgecolor: black
+
+axes.facecolor: white
+axes.edgecolor: black
+axes.grid: True
+axes.grid.which: both
+
+grid.alpha: 0.7
+grid.linestyle: --
+grid.linewidth: 0.5
+grid.color: "#cccccc"
+
+xtick.color: "#000000"
+ytick.color: "#000000"
+xtick.labelsize: 16
+ytick.labelsize: 16
+
+legend.loc: lower right
+legend.fontsize: 20
+legend.frameon: True
+legend.labelcolor: "#000000"
+legend.facecolor: white
+legend.edgecolor: black
+
+text.color: "#000000"
+axes.labelcolor: "#000000"
+axes.labelsize: 22
+axes.titlesize: 22
+
+axes.spines.top: True
+axes.spines.right: True
+axes.spines.bottom: True
+axes.spines.left: True

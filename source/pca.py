@@ -13,7 +13,7 @@ from VQC import VQC
 current_file = Path(__file__)
 
 # modify here to select the correct training data
-input_file = current_file.parent.parent / 'data' / 'cancer' / 'breast_cancer_tonumbers_dead.csv'
+input_file = current_file.parent.parent / 'data' / 'processed' / 'downsampled' / 'downsampled_breast_cancer_dead.csv'
 print('I am using the data file at the path:' + str(input_file))
 
 data = pd.read_csv(input_file)
@@ -28,13 +28,32 @@ data_scaled = scaler.fit_transform(data)
 pca = PCA()
 pca.fit(data_scaled)
 
-# Step 8: Plot cumulative explained variance to choose the number of components
-plt.figure(figsize=(8, 5))
-plt.plot(np.cumsum(pca.explained_variance_ratio_), marker='o', linestyle='--')
+dark_background = False
+if dark_background == True:
+    style_path = current_file.parent.parent / 'transparent.mplstyle'
+    suffix = '_transparent'
+
+else:
+    style_path = current_file.parent.parent / 'normal_plot.mplstyle'
+    suffix = '_normal'
+
+plt.style.use(style_path)
+# Plot the feature importances
+
+plt.plot(np.cumsum(pca.explained_variance_ratio_), marker='o', linestyle='--', color ='#ae77d6')
 plt.xlabel('Number of Components')
 plt.ylabel('Cumulative Explained Variance')
 plt.title('Explained Variance by Components')
-plt.grid()
+
+file = 'variance' + suffix + '.png'
+
+saving_path = current_file.parent.parent / 'results' / file
+# Check if the file already exists
+if saving_path.exists():
+    print(f"The file '{saving_path.name}' already exists.")
+else:
+    # Save the final DataFrame if the file does not exist
+    plt.savefig(saving_path)
 plt.show()
 
 # Step 9: Select the number of components (e.g., 95% variance threshold)
@@ -52,7 +71,7 @@ final_data = pd.DataFrame(data_pca, columns=[f'PC{i+1}' for i in range(desired_c
 final_data['Status_Dead'] = target.reset_index(drop=True)
 
 # Save the final DataFrame
-output_file = current_file.parent.parent / 'data' / 'cancer' / f'PCA_breast_cancer_dead_{desired_components}features.csv'
+output_file = current_file.parent.parent / 'data' / 'processed' / 'downsampled_pca' / f'downsampled_pca_breast_cancer_dead_{desired_components}f.csv'
 
 # Check if the file already exists
 if output_file.exists():

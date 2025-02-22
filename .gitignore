@@ -225,5 +225,5 @@ ClassicML/Breast_Cancer.csv
 
 
 
-
+*.json
 *.test

@@ -1,7 +1,10 @@
 # CancerQML
 
-This is the repository related to a project of QubiTO (a team of Politecnico di Torino) involving the training of a quantum machine learning model.
+This is a repository related to a project done with the QubiTo team (of Politecnico di Torino) that presents quantum machine learning model training aimed at predicting breast cancer.
 
+### Possible purposes
+
+The main purpose of a model like this is to predict the status of a patient. By analyzing various parameters related to a patient, the model can provide an estimate of the likelihood of the patient having breast cancer. This information can be valuable for medical staff when making decisions about whether to intervene or not on patients upon their parameter's values.
 
 ### Dataset
 The dataset used was obtained from [here](https://www.kaggle.com/datasets/reihanenamdari/breast-cancer). It concerned the correct prediction of breast cancer in various patients.
@@ -23,7 +26,30 @@ We so discarded all features but the first 10, retaining a good amount of varian
 
 ### Training the models
 
+Before training the dataset was split as usual into three sets: Train, Validation and Test.
 
-Script: https://docs.google.com/document/d/1Ddh6a-vay6XPDfGoNZPHq0MFdjb54wiGrWTzQMZWKMY/edit?tab=t.0
+We then trained the quantum model considering the top 8 to 12 features, to explore different behaviours. Notice that we used only downsampled datasets.
+We used pennylane QML libraries with the following options:
+- angle encoding;
+- strong entangling layer (amount of layers  varying between 5 to 20).
 
-Pres: https://docs.google.com/presentation/d/1cAAfEJD8zmuGvs3vDbFRBj16YBLdosQKMw3aOA1Qc-w/edit#slide=id.g31ecbd86e14_0_0
+The classical model was trained in different ways. (TODO: to be completed from Amir).
+
+### Metric
+
+To optimize the performance of our classifier, we decided to focus on maximizing the Area Under Curve (AUC) of the Receiver Operating Characteristic (ROC) curve. This curve is created by plotting the True positive rate (TPR) against the False positive rate (FPR). By maximizing the AUC, we can provide professionals the best curve to then choose, setting a threshold, to maximize either accuracy or precision, depending on the specific requirements of our application.
+
+### Results
+
+Now we propose the main results obtained.
+We started with 10 features, downsampling and pca:
+![Figure 2](results/comparison_transparent_downsampled_pca_10features_0.01lr.png)
+
+Then we tried without pca and the result was better:
+![Figure 2](results/comparison_transparent_downsampled_10features_0.01lr.png)
+
+In the end we used 8 features instead of 10 and we obtained the best result:
+![Figure 2](results/comparison_transparent_downsampled_8features_0.01lr.png)
+
+
+

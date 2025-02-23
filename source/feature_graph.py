@@ -45,6 +45,7 @@ plt.yticks(range(len(sorted_importances)), sorted_names, zorder =2 )
 plt.title('Feature Importances')
 plt.gca().invert_yaxis()  # This line inverts the y-axis
 plt.tight_layout()
+plt.show()
 
 file = 'feature_importance' + suffix + '.png'
 
@@ -55,4 +56,4 @@ if saving_path.exists():
 else:
     # Save the final DataFrame if the file does not exist
     plt.savefig(saving_path)
-plt.show()
+

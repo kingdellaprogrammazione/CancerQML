@@ -5,14 +5,39 @@ from functions import *
 from VQC import VQC
 import tkinter as tk
 from gui_loader import MetadataGUI
+from pathlib import Path
+from sklearn.metrics import auc
+
+current_file = Path(__file__)
 
 root = tk.Tk()
 root.title("Metadata GUI")
 gui = MetadataGUI(root, "metadata.json")
 root.mainloop()
 
-transparent = False
-plt.figure(figsize=(16, 12))
+dark_background = True
+if dark_background == True:
+    style_path = current_file.parent.parent / 'transparent.mplstyle'
+    suffix = '_transparent'
+     #plt.xlabel("False Positive Rate", color='#ffffff', fontsize=26)
+    # plt.xlabel("False Positive Rate", color='#ffffff')
+    # plt.ylabel("True Positive Rate", color='#ffffff')
+
+else:
+    style_path = current_file.parent.parent / 'normal_plot.mplstyle'
+    suffix = '_normal'
+    # plt.xlabel("False Positive Rate")
+    # plt.ylabel("True Positive Rate")
+
+plt.style.use(style_path)
+
+colors = ['#ae77d6', '#76f3fb','#5a1387','#729bcb']
+
+# Set the default color cycle for matplotlib
+plt.rcParams['axes.prop_cycle'] = plt.cycler(color=colors)
+
+plt.plot([0, 1], [0, 1], color= '#cccccc' , lw=3, linestyle='--', label="Random guess", zorder = 0)
+
 
 if gui.result:
     metadata_list = gui.result
@@ -35,8 +60,14 @@ if gui.result:
             # Evaluate the model and get the ROC curve data
             fpr, tpr, _ = model.evaluate_model(data, draw_roc=False)
             
+            # Compute the AUC
+            auc_value = auc(fpr, tpr)
+
+            # Build the label
+            label = f"{metadata['features']} features, {metadata['layers']} layers, AUC = {auc_value:.3f}"
+            
             # Plot the ROC curve
-            plt.plot(fpr, tpr)
+            plt.plot(fpr, tpr, label = label)
 
         else:
             print("No result found")
@@ -47,37 +78,28 @@ else:
 plt.title('ROC Curves')
 plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
-plt.legend()
-
-
-if transparent == True:
-    plt.plot([0, 1], [0, 1], color= '#ffffff' , lw=3, linestyle='--', label="Random guess", zorder = 0)
-    plt.xlabel("False Positive Rate", color='#ffffff', fontsize=26)
-    plt.ylabel("True Positive Rate", color='#ffffff', fontsize=26)
-    ax = plt.gca()  # Get the current axes
-    ax.spines['top'].set_visible(False)
-    ax.spines['right'].set_visible(False)
-    ax.spines['bottom'].set_visible(False)
-    ax.spines['left'].set_visible(False)
-    #plt.title("Receiver Operating Characteristic (ROC) Curve", color='#ffffff', fontsize=20)
-      # Add legend with white text
-    legend = plt.legend(loc="lower right", fontsize=24)
-    plt.setp(legend.get_texts(), color='#ffffff')  # Set legend text color to white
-    legend.get_frame().set_facecolor('none')       # Make legend background transparent
-    legend.get_frame().set_edgecolor('none')       # Remove legend borde
-    # Customize grid and background
-    plt.grid(color='#ffffff', linestyle='--', linewidth=0.5, alpha=0.7)
-    plt.gca().patch.set_alpha(0)  # Make the axes background transparent
-    plt.gcf().patch.set_alpha(0)  # Make the figure background transparent
-    # Set tick colors
-    plt.tick_params(colors='#ffffff', labelsize=20)
-
-    #         colours = ['#ae77d6', '#76f3fb','#5a1387','#729bcb']
-    # 
-
-plt.plot([0, 1], [0, 1],color = '#cccccc' , lw=3, linestyle='--', label="Random guess", zorder = 0)
-
-# Show the plot
+plt.legend(fontsize = 16)
 plt.show()
+
+# change the name of the file
+file = 'comparison' + suffix 
+
+print(f"Please complete the file name: {file}")
+# Prompt the user to input the remaining part of the string
+personalized = input()
+
+file = file + personalized + '.png'
+
+saving_path = current_file.parent.parent / 'results' / file
+# Check if the file already exists
+if saving_path.exists():
+    print(f"The file '{saving_path.name}' already exists.")
+else:
+    # Save the final DataFrame if the file does not exist
+    plt.savefig(saving_path)
+
+
+
+
 
 

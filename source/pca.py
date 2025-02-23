@@ -44,6 +44,7 @@ plt.plot(np.cumsum(pca.explained_variance_ratio_), marker='o', linestyle='--', c
 plt.xlabel('Number of Components')
 plt.ylabel('Cumulative Explained Variance')
 plt.title('Explained Variance by Components')
+plt.show()
 
 file = 'variance' + suffix + '.png'
 
@@ -54,7 +55,7 @@ if saving_path.exists():
 else:
     # Save the final DataFrame if the file does not exist
     plt.savefig(saving_path)
-plt.show()
+
 
 # Step 9: Select the number of components (e.g., 95% variance threshold)
 

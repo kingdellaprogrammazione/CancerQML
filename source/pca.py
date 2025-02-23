@@ -28,7 +28,7 @@ data_scaled = scaler.fit_transform(data)
 pca = PCA()
 pca.fit(data_scaled)
 
-dark_background = False
+dark_background = True
 if dark_background == True:
     style_path = current_file.parent.parent / 'transparent.mplstyle'
     suffix = '_transparent'
@@ -44,7 +44,6 @@ plt.plot(np.cumsum(pca.explained_variance_ratio_), marker='o', linestyle='--', c
 plt.xlabel('Number of Components')
 plt.ylabel('Cumulative Explained Variance')
 plt.title('Explained Variance by Components')
-plt.show()
 
 file = 'variance' + suffix + '.png'
 
@@ -56,6 +55,7 @@ else:
     # Save the final DataFrame if the file does not exist
     plt.savefig(saving_path)
 
+plt.show()
 
 # Step 9: Select the number of components (e.g., 95% variance threshold)
 
@@ -81,3 +81,4 @@ else:
     # Save the final DataFrame if the file does not exist
     final_data.to_csv(output_file, index=False)
     print(f"File saved as '{output_file.name}'.")
+

@@ -79,7 +79,6 @@ plt.title('ROC Curves')
 plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
 plt.legend(fontsize = 16)
-plt.show()
 
 # change the name of the file
 file = 'comparison' + suffix 
@@ -97,7 +96,8 @@ if saving_path.exists():
 else:
     # Save the final DataFrame if the file does not exist
     plt.savefig(saving_path)
-
+    
+plt.show()
 
 
 

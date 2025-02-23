@@ -7,7 +7,7 @@ This is a repository related to a project done with the QubiTo team (of Politecn
 The main purpose of a model like this is to predict the status of a patient. By analyzing various parameters related to a patient, the model can provide an estimate of the likelihood of the patient having breast cancer. This information can be valuable for medical staff when making decisions about whether to intervene or not on patients upon their parameter's values.
 
 ### Dataset
-The dataset used was obtained from [here](https://www.kaggle.com/datasets/reihanenamdari/breast-cancer). It concerned the correct prediction of breast cancer in various patients.
+The dataset used was obtained from [Kaggle](https://www.kaggle.com/datasets/reihanenamdari/breast-cancer). It concerned the correct prediction of breast cancer in various patients.
 
 ### Feature importance analysis
 We firstly analyzed the relative importance of the features since we had limited power to simulate quantum hardware. We chose to use a range of 8 to 12 qubits, so 8 to 12 features.
@@ -29,11 +29,11 @@ We so discarded all features but the first 10, retaining a good amount of varian
 Before training the dataset was split as usual into three sets: Train, Validation and Test.
 
 We then trained the quantum model considering the top 8 to 12 features, to explore different behaviours. Notice that we used only downsampled datasets.
-We used pennylane QML libraries with the following options:
+We used [Pennylane QML libraries](https://pennylane.ai) with the following options:
 - angle encoding;
-- strong entangling layer (amount of layers  varying between 5 to 20).
+- strongly entangling layer (amount of layers  varying between 5 to 20).
 
-The classical model was trained in different ways. (TODO: to be completed from Amir).
+The classical model was trained in different ways. (TODO: to be completed).
 
 ### Metric
 
@@ -52,4 +52,6 @@ In the end we used 8 features instead of 10 and we obtained the best result:
 ![Figure 2](results/comparison_transparent_downsampled_8features_0.01lr.png)
 
 
+### Conclusion
 
+Classical or quantum?

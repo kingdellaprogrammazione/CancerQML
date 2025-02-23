@@ -6,6 +6,8 @@ axes.facecolor: white
 axes.edgecolor: black
 axes.grid: True
 axes.grid.which: both
+axes.labelpad: 20
+axes.titlepad: 20
 
 grid.alpha: 0.7
 grid.linestyle: --
@@ -18,7 +20,7 @@ xtick.labelsize: 16
 ytick.labelsize: 16
 
 legend.loc: lower right
-legend.fontsize: 20
+legend.fontsize: 16
 legend.frameon: True
 legend.labelcolor: "#000000"
 legend.facecolor: white
@@ -27,7 +29,7 @@ legend.edgecolor: black
 text.color: "#000000"
 axes.labelcolor: "#000000"
 axes.labelsize: 22
-axes.titlesize: 22
+axes.titlesize: 26
 
 axes.spines.top: True
 axes.spines.right: True

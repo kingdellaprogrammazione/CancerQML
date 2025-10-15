@@ -1,0 +1,32 @@
+
+MODEL REPORT
+============
+
+Model: XGBClassifier
+Train Size: 614
+Test Size: 154
+
+Feature Importances:
+Glucose                     0.250108
+Age                         0.137263
+BMI                         0.136059
+SkinThickness               0.109254
+Insulin                     0.104099
+BloodPressure               0.091153
+DiabetesPedigreeFunction    0.088837
+Pregnancies                 0.083229
+
+Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.82      0.73      0.77        99
+           1       0.59      0.71      0.64        55
+
+    accuracy                           0.72       154
+   macro avg       0.70      0.72      0.71       154
+weighted avg       0.74      0.72      0.73       154
+
+
+Confusion Matrix:
+[[72 27]
+ [16 39]]

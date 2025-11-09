@@ -1,0 +1,58 @@
+Using device: cpu
+
+Selected 12 features:
+['Reginol Node Positive', 'Tumor Size', 'T Stage _T2', 'Race_White', '6th Stage_IIIC', 'N Stage_N3', 'Age', 'Marital Status_Married', 'Estrogen Status_Positive', 'Regional Node Examined', 'Progesterone Status_Positive', 'Marital Status_Single ']
+
+
+
+--- Evaluating Model: 12F / 5 Blocks ---
+Classification Report (12F / 5 Blocks):
+              precision    recall  f1-score   support
+
+         0.0       0.85      0.99      0.92      1023
+         1.0       0.45      0.05      0.09       185
+
+    accuracy                           0.85      1208
+   macro avg       0.65      0.52      0.50      1208
+weighted avg       0.79      0.85      0.79      1208
+
+Area Under the ROC Curve (AUC) for 12F / 5 Blocks: 0.6908
+
+
+Classification Report (12F / 10 Blocks):
+              precision    recall  f1-score   support
+
+         0.0       0.86      0.98      0.92      1023
+         1.0       0.53      0.11      0.19       185
+
+    accuracy                           0.85      1208
+   macro avg       0.69      0.55      0.55      1208
+weighted avg       0.81      0.85      0.80      1208
+
+Area Under the ROC Curve (AUC) for 12F / 10 Blocks: 0.6871
+
+
+Classification Report (12F / 15 Blocks):
+              precision    recall  f1-score   support
+
+         0.0       0.85      0.99      0.92      1023
+         1.0       0.57      0.06      0.12       185
+
+    accuracy                           0.85      1208
+   macro avg       0.71      0.53      0.52      1208
+weighted avg       0.81      0.85      0.79      1208
+
+Area Under the ROC Curve (AUC) for 12F / 15 Blocks: 0.6962
+
+
+Classification Report (12F / 20 Blocks):
+              precision    recall  f1-score   support
+
+         0.0       0.85      0.99      0.92      1023
+         1.0       0.48      0.08      0.13       185
+
+    accuracy                           0.85      1208
+   macro avg       0.67      0.53      0.52      1208
+weighted avg       0.80      0.85      0.80      1208
+
+Area Under the ROC Curve (AUC) for 12F / 20 Blocks: 0.6845

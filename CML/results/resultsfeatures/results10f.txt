@@ -1,0 +1,56 @@
+Using device: cpu
+
+Selected 10 features:
+['Survival Months', 'Reginol Node Positive', 'N Stage_N3', 'N Stage_N1', 'Progesterone Status_Positive', 'Tumor Size', 'Marital Status_Married', 'Age', 'Regional Node Examined', 'Marital Status_Divorced']
+
+
+Classification Report (10F / 5 Blocks):
+              precision    recall  f1-score   support
+
+         0.0       0.91      0.97      0.94      1023
+         1.0       0.74      0.44      0.55       185
+
+    accuracy                           0.89      1208
+   macro avg       0.82      0.70      0.74      1208
+weighted avg       0.88      0.89      0.88      1208
+
+Area Under the ROC Curve (AUC) for 10F / 5 Blocks: 0.8412
+
+
+Classification Report (10F / 10 Blocks):
+              precision    recall  f1-score   support
+
+         0.0       0.90      0.98      0.94      1023
+         1.0       0.78      0.38      0.51       185
+
+    accuracy                           0.89      1208
+   macro avg       0.84      0.68      0.73      1208
+weighted avg       0.88      0.89      0.87      1208
+
+Area Under the ROC Curve (AUC) for 10F / 10 Blocks: 0.8454
+
+
+Classification Report (10F / 15 Blocks):
+              precision    recall  f1-score   support
+
+         0.0       0.91      0.97      0.94      1023
+         1.0       0.73      0.44      0.55       185
+
+    accuracy                           0.89      1208
+   macro avg       0.82      0.71      0.74      1208
+weighted avg       0.88      0.89      0.88      1208
+
+Area Under the ROC Curve (AUC) for 10F / 15 Blocks: 0.8450
+
+
+Classification Report (10F / 20 Blocks):
+              precision    recall  f1-score   support
+
+         0.0       0.91      0.98      0.94      1023
+         1.0       0.82      0.43      0.57       185
+
+    accuracy                           0.90      1208
+   macro avg       0.86      0.71      0.75      1208
+weighted avg       0.89      0.90      0.88      1208
+
+Area Under the ROC Curve (AUC) for 10F / 20 Blocks: 0.8478
